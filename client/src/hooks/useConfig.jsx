@@ -23,7 +23,8 @@ export function ConfigProvider({ children }) {
       const data = await response.json();
       // Use "venta" (selling price) for customer-facing calculations
       const dollarRate = data.venta;
-      const lastDollarUpdate = data.fechaActualizacion;
+      // Use current time to show when WE last checked/updated the rate
+      const lastDollarUpdate = new Date().toISOString();
 
       setConfig(prev => ({
         ...prev,

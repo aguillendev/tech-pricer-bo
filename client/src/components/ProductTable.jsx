@@ -66,7 +66,9 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                   <th className="p-4 font-semibold text-right">Costo ARS</th>
                 </>
               )}
-              <th className="p-4 font-semibold text-right text-green-600">Precio</th>
+              <th className="p-4 font-semibold text-right text-green-600">
+                {isLoggedIn ? 'Precio Final' : 'Precio'}
+              </th>
               <th className="p-4 font-semibold text-center w-24">Acción</th>
             </tr>
           </thead>

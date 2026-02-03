@@ -21,7 +21,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex flex-col items-end">
             <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Cotización Dólar</span>
-            <div className="flex items-center text-green-400 font-mono text-lg font-bold">
+            <div className="flex items-center text-green-400 font-mono text-lg font-bold" title={config.lastDollarUpdate ? `Actualizado: ${new Date(config.lastDollarUpdate).toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour: '2-digit', minute: '2-digit' })}` : ''}>
               {loading ? (
                 <span className="animate-pulse">...</span>
               ) : (
