@@ -13,16 +13,8 @@ const MOCK_CONFIG = {
   lastUpdated: new Date().toISOString(),
 };
 
-const MOCK_PRODUCTS = [
-  { id: 1, name: 'Laptop Gamer X1', priceUsd: 850.00, category: 'Computación' },
-  { id: 2, name: 'Mouse Inalámbrico', priceUsd: 15.50, category: 'Periféricos' },
-  { id: 3, name: 'Monitor 24" 144Hz', priceUsd: 180.00, category: 'Monitores' },
-  { id: 4, name: 'Teclado Mecánico RGB', priceUsd: 45.00, category: 'Periféricos' },
-  { id: 5, name: 'Auriculares Bluetooth', priceUsd: 35.00, category: 'Audio' },
-  { id: 6, name: 'Placa de Video RTX 4060', priceUsd: 320.00, category: 'Componentes' },
-  { id: 7, name: 'Procesador Ryzen 5', priceUsd: 150.00, category: 'Componentes' },
-  { id: 8, name: 'Memoria RAM 16GB DDR4', priceUsd: 40.00, category: 'Componentes' },
-];
+const MOCK_PRODUCTS = [];
+// Products will be populated via bulk import or manual add
 
 // Mock Interceptor
 // Set to true to enable mocking
