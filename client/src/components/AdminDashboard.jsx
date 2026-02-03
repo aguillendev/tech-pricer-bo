@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Settings, Database, PlusCircle, Save, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useConfig } from '../hooks/useConfig';
+import { useConfig } from '../hooks/useConfig.jsx';
 import { useProducts } from '../hooks/useProducts';
 
 export default function AdminDashboard() {
-    const { config, updateConfig } = useConfig();
+    const { config, updateConfig, refreshDollarRate } = useConfig();
     const { addProduct, importProducts } = useProducts();
 
     const [activeTab, setActiveTab] = useState('config');
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
 
     const showStatus = (type, message) => {
         setStatus({ type, message });
-        setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+        setTimeout(() => setStatus({ type: '', message: '' }), 5000);
     };
 
     const handleUpdateConfig = async (e) => {
@@ -41,10 +41,15 @@ export default function AdminDashboard() {
         if (!importText.trim()) return;
         setLoadingAction(true);
         setImportedProducts([]); // Clear previous results
+
+        // First, refresh dollar rate
+        await refreshDollarRate();
+
+        // Then import products
         const result = await importProducts(importText);
         setLoadingAction(false);
         if (result.success) {
-            showStatus('success', result.message);
+            showStatus('success', `${result.message} | Cotización actualizada: $${config.dollarRate}`);
             setImportText('');
             setImportedProducts(result.products || []);
         } else {

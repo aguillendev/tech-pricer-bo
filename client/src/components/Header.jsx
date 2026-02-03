@@ -1,5 +1,5 @@
 import React from 'react';
-import { useConfig } from '../hooks/useConfig';
+import { useConfig } from '../hooks/useConfig.jsx';
 import { useAuth } from '../hooks/useAuth';
 import { DollarSign, Monitor, Lock, UserCheck, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';

@@ -4,7 +4,7 @@ import ProductTable from '../components/ProductTable';
 import CartSummary from '../components/CartSummary';
 import ExportModal from '../components/ExportModal';
 import { useProducts } from '../hooks/useProducts';
-import { useConfig } from '../hooks/useConfig';
+import { useConfig } from '../hooks/useConfig.jsx';
 
 export default function Home() {
   const { products, loading: productsLoading } = useProducts();
