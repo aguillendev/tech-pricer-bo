@@ -66,12 +66,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                   <th className="p-4 font-semibold text-right">Costo ARS</th>
                 </>
               )}
-              {!isLoggedIn && (
-                <th className="p-4 font-semibold text-right hidden sm:table-cell">Precio USD</th>
-              )}
-              <th className="p-4 font-semibold text-right text-green-600">
-                {isLoggedIn ? 'Precio Final' : 'Precio ARS'}
-              </th>
+              <th className="p-4 font-semibold text-right text-green-600">Precio</th>
               <th className="p-4 font-semibold text-center w-24">Acción</th>
             </tr>
           </thead>
@@ -98,11 +93,6 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                         </td>
                       </>
                     )}
-                    {!isLoggedIn && (
-                      <td className="p-4 text-right text-slate-500 font-mono hidden sm:table-cell">
-                        ${product.priceUsd.toFixed(2)}
-                      </td>
-                    )}
                     <td className="p-4 text-right font-bold text-slate-900 font-mono text-lg">
                       <span className={isLoggedIn ? 'text-green-600' : ''}>
                         ${displayPrice.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
@@ -128,7 +118,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
               })
             ) : (
               <tr>
-                <td colSpan={isLoggedIn ? "5" : "4"} className="p-8 text-center text-slate-400">
+                <td colSpan={isLoggedIn ? "5" : "3"} className="p-8 text-center text-slate-400">
                   No se encontraron productos
                 </td>
               </tr>
