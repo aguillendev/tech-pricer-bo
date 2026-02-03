@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { Search, ShoppingCart, Plus } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useAuth } from '../hooks/useAuth';
 
-export default function ProductTable({ products, dollarRate, onAddToCart, cartItems }) {
+export default function ProductTable({ products, dollarRate, onAddToCart, cartItems, profitMargin = 30 }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const { isLoggedIn } = useAuth();
 
   const filteredProducts = useMemo(() => {
     return products.filter(product =>
@@ -14,6 +16,13 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
 
   // Helper to check if item is in cart
   const isInCart = (productId) => cartItems.some(item => item.id === productId);
+
+  // Calculate prices
+  const calculatePrices = (priceUsd) => {
+    const costArs = priceUsd * dollarRate;
+    const finalPrice = costArs * (1 + profitMargin / 100);
+    return { costArs, finalPrice };
+  };
 
   return (
     <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
@@ -29,6 +38,20 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        {/* Admin info badge */}
+        {isLoggedIn && (
+          <div className="mt-3 flex items-center gap-4 text-xs">
+            <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+              Vista Admin
+            </span>
+            <span className="text-slate-500">
+              Cotización: <span className="font-mono font-bold">${dollarRate.toFixed(2)}</span>
+            </span>
+            <span className="text-slate-500">
+              Ganancia: <span className="font-mono font-bold text-green-600">{profitMargin}%</span>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Table */}
@@ -37,16 +60,27 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
           <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider sticky top-0 z-10">
             <tr>
               <th className="p-4 font-semibold">Producto</th>
-              <th className="p-4 font-semibold text-right hidden sm:table-cell">Precio USD</th>
-              <th className="p-4 font-semibold text-right text-blue-600">Precio ARS</th>
+              {isLoggedIn && (
+                <>
+                  <th className="p-4 font-semibold text-right">Costo USD</th>
+                  <th className="p-4 font-semibold text-right">Costo ARS</th>
+                </>
+              )}
+              {!isLoggedIn && (
+                <th className="p-4 font-semibold text-right hidden sm:table-cell">Precio USD</th>
+              )}
+              <th className="p-4 font-semibold text-right text-green-600">
+                {isLoggedIn ? 'Precio Final' : 'Precio ARS'}
+              </th>
               <th className="p-4 font-semibold text-center w-24">Acción</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => {
-                const priceArs = product.priceUsd * dollarRate;
+                const { costArs, finalPrice } = calculatePrices(product.priceUsd);
                 const inCart = isInCart(product.id);
+                const displayPrice = isLoggedIn ? finalPrice : costArs;
 
                 return (
                   <tr key={product.id} className="hover:bg-slate-50 transition group">
@@ -54,11 +88,25 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                       <div className="font-medium text-slate-900">{product.name}</div>
                       <div className="text-xs text-slate-500">{product.category}</div>
                     </td>
-                    <td className="p-4 text-right text-slate-500 font-mono hidden sm:table-cell">
-                      ${product.priceUsd.toFixed(2)}
-                    </td>
+                    {isLoggedIn && (
+                      <>
+                        <td className="p-4 text-right text-slate-500 font-mono">
+                          ${product.priceUsd.toFixed(2)}
+                        </td>
+                        <td className="p-4 text-right text-slate-500 font-mono">
+                          ${costArs.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </td>
+                      </>
+                    )}
+                    {!isLoggedIn && (
+                      <td className="p-4 text-right text-slate-500 font-mono hidden sm:table-cell">
+                        ${product.priceUsd.toFixed(2)}
+                      </td>
+                    )}
                     <td className="p-4 text-right font-bold text-slate-900 font-mono text-lg">
-                      ${priceArs.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      <span className={isLoggedIn ? 'text-green-600' : ''}>
+                        ${displayPrice.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </span>
                     </td>
                     <td className="p-4 text-center">
                       <button
@@ -80,7 +128,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
               })
             ) : (
               <tr>
-                <td colSpan="4" className="p-8 text-center text-slate-400">
+                <td colSpan={isLoggedIn ? "5" : "4"} className="p-8 text-center text-slate-400">
                   No se encontraron productos
                 </td>
               </tr>
@@ -91,3 +139,4 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
     </div>
   );
 }
+
