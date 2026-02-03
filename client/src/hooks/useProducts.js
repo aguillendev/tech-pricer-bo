@@ -23,25 +23,25 @@ export function useProducts() {
   };
 
   const addProduct = async (productData) => {
-      try {
-          await api.post('/admin/product', productData);
-          await fetchProducts(); // Refresh list
-          return true;
-      } catch (err) {
-          console.error(err);
-          return false;
-      }
+    try {
+      await api.post('/admin/product', productData);
+      await fetchProducts(); // Refresh list
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   }
 
   const importProducts = async (rawData) => {
-      try {
-          await api.post('/admin/import', { data: rawData });
-          // In a real app we might reload products
-          return true;
-      } catch (err) {
-          console.error(err);
-          return false;
-      }
+    try {
+      const response = await api.post('/admin/import', { data: rawData });
+      await fetchProducts(); // Refresh products list
+      return response.data; // Returns { success, message, products }
+    } catch (err) {
+      console.error(err);
+      return { success: false, message: 'Error en la importación', products: [] };
+    }
   }
 
   return { products, loading, error, fetchProducts, addProduct, importProducts };

@@ -66,8 +66,68 @@ if (USE_MOCKS) {
 
       // POST /admin/import
       if (method === 'post' && url.includes('/admin/import')) {
+        const parsedData = JSON.parse(data);
+        const rawText = parsedData.data || '';
+        const lines = rawText.split('\n').filter(line => line.trim());
+        const importedProducts = [];
+        let currentCategory = 'Sin categoría';
+
+        // Regex patterns
+        const categoryPattern = /^►\s*(.+?)(?:\s*-\s*GTIA.*)?$/i;
+        const productPattern = /^▪️(.+?)\s*-\s*\$\s*([\d,.]+)/;
+
+        lines.forEach(line => {
+          const trimmedLine = line.trim();
+
+          // Check if it's a category line (starts with ►)
+          const categoryMatch = trimmedLine.match(categoryPattern);
+          if (categoryMatch) {
+            currentCategory = categoryMatch[1].trim();
+            return; // Skip to next line
+          }
+
+          // Check if it's a product line (starts with ▪️)
+          const productMatch = trimmedLine.match(productPattern);
+          if (productMatch) {
+            const name = productMatch[1].trim();
+            const priceStr = productMatch[2].replace(',', '.');
+            const priceUsd = parseFloat(priceStr) || 0;
+
+            const newProduct = {
+              id: MOCK_PRODUCTS.length + importedProducts.length + 1,
+              name,
+              priceUsd,
+              category: currentCategory
+            };
+            importedProducts.push(newProduct);
+            return;
+          }
+
+          // Fallback: Try old CSV format (name, price, category)
+          const parts = trimmedLine.split(',').map(p => p.trim());
+          if (parts.length >= 2 && !trimmedLine.startsWith('►') && !trimmedLine.startsWith('▪️')) {
+            const name = parts[0];
+            const priceUsd = parseFloat(parts[1]) || 0;
+            const category = parts[2] || 'Sin categoría';
+            const newProduct = {
+              id: MOCK_PRODUCTS.length + importedProducts.length + 1,
+              name,
+              priceUsd,
+              category
+            };
+            importedProducts.push(newProduct);
+          }
+        });
+
+        // Agregar los productos importados al array principal
+        MOCK_PRODUCTS.push(...importedProducts);
+
         return {
-          data: { success: true, message: 'Productos importados correctamente' },
+          data: {
+            success: true,
+            message: `${importedProducts.length} productos importados correctamente`,
+            products: importedProducts
+          },
           status: 200,
           statusText: 'OK',
           headers: {},
@@ -77,39 +137,39 @@ if (USE_MOCKS) {
 
       // POST /admin/product (Manual Add)
       if (method === 'post' && url.includes('/admin/product')) {
-         const newProduct = JSON.parse(data);
-         MOCK_PRODUCTS.push({ ...newProduct, id: MOCK_PRODUCTS.length + 1 });
-         return {
-            data: { success: true, message: 'Producto agregado' },
-            status: 200,
-            statusText: 'OK',
-            headers: {},
-            config
-         }
+        const newProduct = JSON.parse(data);
+        MOCK_PRODUCTS.push({ ...newProduct, id: MOCK_PRODUCTS.length + 1 });
+        return {
+          data: { success: true, message: 'Producto agregado' },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config
+        }
       }
 
       // POST /admin/config
       if (method === 'post' && url.includes('/admin/config')) {
-         const newConfig = JSON.parse(data);
-         if (newConfig.profitMargin) MOCK_CONFIG.profitMargin = newConfig.profitMargin;
-         return {
-            data: { success: true, message: 'Configuración actualizada' },
-            status: 200,
-            statusText: 'OK',
-            headers: {},
-            config
-         }
+        const newConfig = JSON.parse(data);
+        if (newConfig.profitMargin) MOCK_CONFIG.profitMargin = newConfig.profitMargin;
+        return {
+          data: { success: true, message: 'Configuración actualizada' },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config
+        }
       }
 
       // Login (Mock)
       if (method === 'post' && url.includes('/auth/login')) {
-         return {
-            data: { token: 'mock-token-123' },
-            status: 200,
-            statusText: 'OK',
-            headers: {},
-            config
-         }
+        return {
+          data: { token: 'mock-token-123' },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config
+        }
       }
 
       return {
