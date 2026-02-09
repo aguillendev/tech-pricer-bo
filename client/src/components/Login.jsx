@@ -27,8 +27,8 @@ export default function Login() {
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
         <div className="text-center mb-8">
-          <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-blue-600" />
+          <div className="bg-[#f5e6c3] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-[#1e3a5f]" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900">Acceso Administrativo</h2>
           <p className="text-slate-500 text-sm mt-2">Ingresa tus credenciales para gestionar.</p>
@@ -40,8 +40,8 @@ export default function Login() {
             <input
               type="email"
               required
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="admin@techpricer.com"
+              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#d4af37] outline-none"
+              placeholder="admin@cahpoint.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
@@ -51,7 +51,7 @@ export default function Login() {
             <input
               type="password"
               required
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#d4af37] outline-none"
               placeholder="••••••"
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -60,7 +60,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50"
+            className="w-full bg-[#1e3a5f] text-white py-3 rounded-lg font-bold hover:bg-[#152943] transition disabled:opacity-50 shadow-lg shadow-[#1e3a5f]/30"
           >
             {loading ? 'Verificando...' : 'Ingresar'}
           </button>

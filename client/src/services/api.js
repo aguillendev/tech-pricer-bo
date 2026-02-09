@@ -10,6 +10,7 @@ const api = axios.create({
 const MOCK_CONFIG = {
   dollarRate: 1250.00,
   profitMargin: 30, // Percentage
+  profitRules: [], // Rules for conditional profit margins
   lastUpdated: new Date().toISOString(),
 };
 
@@ -140,10 +141,48 @@ if (USE_MOCKS) {
         }
       }
 
+      // DELETE /admin/product/:id (Delete Single Product)
+      if (method === 'delete' && url.match(/\/admin\/product\/\d+$/)) {
+        const productId = parseInt(url.split('/').pop());
+        const index = MOCK_PRODUCTS.findIndex(p => p.id === productId);
+        if (index !== -1) {
+          MOCK_PRODUCTS.splice(index, 1);
+          return {
+            data: { success: true, message: 'Producto eliminado' },
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config
+          }
+        }
+        return {
+          data: { success: false, message: 'Producto no encontrado' },
+          status: 404,
+          statusText: 'Not Found',
+          headers: {},
+          config
+        }
+      }
+
+      // DELETE /admin/products (Delete All)
+      if (method === 'delete' && url.includes('/admin/products')) {
+        const count = MOCK_PRODUCTS.length;
+        MOCK_PRODUCTS.length = 0; // Clear array
+        return {
+          data: { success: true, message: `${count} productos eliminados`, count },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config
+        }
+      }
+
       // POST /admin/config
       if (method === 'post' && url.includes('/admin/config')) {
         const newConfig = JSON.parse(data);
-        if (newConfig.profitMargin) MOCK_CONFIG.profitMargin = newConfig.profitMargin;
+        if (newConfig.profitMargin !== undefined) MOCK_CONFIG.profitMargin = newConfig.profitMargin;
+        if (newConfig.profitRules !== undefined) MOCK_CONFIG.profitRules = newConfig.profitRules;
+        MOCK_CONFIG.lastUpdated = new Date().toISOString();
         return {
           data: { success: true, message: 'Configuración actualizada' },
           status: 200,
