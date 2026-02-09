@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create Axios instance
 const api = axios.create({
-  baseURL: '/api', // Relative path to be proxied or intercepted
+  baseURL: 'http://localhost:8080/api',
   timeout: 5000,
 });
 
@@ -18,7 +18,7 @@ const MOCK_PRODUCTS = [];
 
 // Mock Interceptor
 // Set to true to enable mocking
-const USE_MOCKS = true;
+const USE_MOCKS = false;
 
 if (USE_MOCKS) {
   api.interceptors.request.use(async (config) => {
