@@ -9,19 +9,20 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm print:bg-white print:p-0">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col print:shadow-none print:w-full print:max-w-none print:max-h-none print:rounded-none">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm print:bg-white print:p-0">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] flex flex-col print:shadow-none print:w-full print:max-w-none print:max-h-none print:rounded-none">
 
         {/* Header - No Print controls */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 print:hidden">
-          <h2 className="text-xl font-bold text-slate-900">Vista de Exportación</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 print:hidden">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">Vista de Exportación</h2>
           <div className="flex space-x-2">
             <button
               onClick={handlePrint}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#152943] transition text-sm sm:text-base"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir / PDF</span>
+              <span className="hidden sm:inline">Imprimir / PDF</span>
+              <span className="sm:hidden">Imprimir</span>
             </button>
             <button
               onClick={onClose}
@@ -33,11 +34,10 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
         </div>
 
         {/* Printable Content */}
-        <div className="p-8 overflow-y-auto print:p-0 print:overflow-visible flex-1">
-          <div className="mb-8 text-center border-b pb-6">
-            <h1 className="text-3xl font-bold text-[#1e3a5f] mb-2">Presupuesto CAH Point</h1>
+        <div className="p-4 sm:p-8 overflow-y-auto print:p-0 print:overflow-visible flex-1">
+          <div className="mb-6 sm:mb-8 text-center border-b pb-4 sm:pb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1e3a5f] mb-2">Presupuesto CAH Point</h1>
             <p className="text-slate-500">Fecha: {new Date().toLocaleDateString()}</p>
-            <p className="text-slate-500 text-sm mt-1">Cotización Dólar: ${dollarRate}</p>
           </div>
 
           <table className="w-full text-left mb-8">
