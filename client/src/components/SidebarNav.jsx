@@ -15,10 +15,10 @@ export default function SidebarNav({ config }) {
   };
 
   return (
-    <div className="hidden lg:block w-72 bg-white rounded-lg border border-slate-200">
+    <div className="hidden lg:flex flex-col w-64 bg-white border-l border-slate-200 h-[calc(100vh-64px)] sticky top-16">
       {/* Contenido informativo - Solo en página Admin */}
       {location.pathname === '/admin' && config && (
-        <div className="p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 space-y-4">
           {/* Configuración Global */}
           <div className="bg-white rounded-lg p-3 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Ganancia Global</p>
