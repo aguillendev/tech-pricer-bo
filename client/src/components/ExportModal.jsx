@@ -35,7 +35,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
         {/* Printable Content */}
         <div className="p-8 overflow-y-auto print:p-0 print:overflow-visible flex-1">
           <div className="mb-8 text-center border-b pb-6">
-            <h1 className="text-3xl font-bold text-[#1e3a5f] mb-2">Presupuesto CAH Point</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Presupuesto TechPricer</h1>
             <p className="text-slate-500">Fecha: {new Date().toLocaleDateString()}</p>
             <p className="text-slate-500 text-sm mt-1">Cotización Dólar: ${dollarRate}</p>
           </div>
@@ -55,7 +55,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
                     <div className="text-xs text-slate-500">{item.category}</div>
                   </td>
                   <td className="py-3 text-right text-slate-800 font-mono">
-                    ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
                   </td>
                 </tr>
               ))}
@@ -63,8 +63,8 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
             <tfoot>
               <tr>
                 <td className="py-4 text-xl font-bold text-slate-900 text-right pr-4">Total Final:</td>
-                <td className="py-4 text-xl font-bold text-[#1e3a5f] text-right font-mono">
-                  ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <td className="py-4 text-xl font-bold text-blue-600 text-right font-mono">
+                  ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 0 })}
                 </td>
               </tr>
             </tfoot>
@@ -72,7 +72,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
 
           <div className="text-center text-slate-400 text-sm mt-12 print:mt-auto">
             <p>Presupuesto válido por 24 horas.</p>
-            <p>CAH Point</p>
+            <p>TechPricer Inc.</p>
           </div>
         </div>
       </div>

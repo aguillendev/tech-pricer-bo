@@ -44,27 +44,5 @@ export function useProducts() {
     }
   }
 
-  const deleteProduct = async (productId) => {
-    try {
-      const response = await api.delete(`/admin/product/${productId}`);
-      await fetchProducts(); // Refresh products list
-      return response.data; // Returns { success, message }
-    } catch (err) {
-      console.error(err);
-      return { success: false, message: 'Error al eliminar producto' };
-    }
-  }
-
-  const deleteAllProducts = async () => {
-    try {
-      const response = await api.delete('/admin/products');
-      await fetchProducts(); // Refresh products list
-      return response.data; // Returns { success, message, count }
-    } catch (err) {
-      console.error(err);
-      return { success: false, message: 'Error al eliminar productos' };
-    }
-  }
-
-  return { products, loading, error, fetchProducts, addProduct, importProducts, deleteProduct, deleteAllProducts };
+  return { products, loading, error, fetchProducts, addProduct, importProducts };
 }

@@ -27,15 +27,6 @@ export default function Home() {
     setCartItems(cartItems.filter(item => item.id !== productId));
   };
 
-  const handleProductDeleted = (productId) => {
-    // Eliminar también del carrito si estaba ahí
-    setCartItems(cartItems.filter(item => item.id !== productId));
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-  };
-
   const isLoading = productsLoading || configLoading;
 
   return (
@@ -46,7 +37,7 @@ export default function Home() {
         {/* Main Content: Product List */}
         <div className="flex-1 min-w-0">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Listado de Productos</h2>
+            <h2 className="text-2xl font-bold text-slate-900">Listado de Productos</h2>
             <p className="text-slate-500">Selecciona los componentes para armar tu presupuesto.</p>
           </div>
 
@@ -59,10 +50,8 @@ export default function Home() {
               products={products}
               dollarRate={dollarRate}
               profitMargin={config.profitMargin || 30}
-              profitRules={config.profitRules || []}
               onAddToCart={handleAddToCart}
               cartItems={cartItems}
-              onProductDeleted={handleProductDeleted}
             />
           )}
         </div>
@@ -73,7 +62,6 @@ export default function Home() {
           dollarRate={dollarRate}
           onRemoveItem={handleRemoveFromCart}
           onExport={() => setIsExportModalOpen(true)}
-          onClearCart={handleClearCart}
         />
       </main>
 

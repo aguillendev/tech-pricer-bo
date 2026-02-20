@@ -1,14 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Login from '../components/Login';
 import AdminDashboard from '../components/AdminDashboard';
-import SidebarNav from '../components/SidebarNav';
 import { useAuth } from '../hooks/useAuth';
-import { useConfig } from '../hooks/useConfig.jsx';
+import { List } from 'lucide-react';
 
 export default function Admin() {
-  const { isLoggedIn } = useAuth();
-  const { config } = useConfig();
+  const { isLoggedIn, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -18,18 +17,29 @@ export default function Admin() {
         {!isLoggedIn ? (
           <Login />
         ) : (
-          <div className="animate-fade-in flex flex-col lg:flex-row gap-6 relative">
-            {/* Main Content */}
-            <div className="flex-1 min-w-0">
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Panel de Administración</h1>
+          <div className="animate-fade-in">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900">Panel de Administración</h1>
                 <p className="text-slate-500">Gestiona precios, configuración y productos.</p>
               </div>
-              <AdminDashboard />
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                >
+                  <List className="w-4 h-4" />
+                  Ver Lista de Precios
+                </Link>
+                <button
+                  onClick={logout}
+                  className="text-sm text-red-500 hover:text-red-700 font-medium"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
             </div>
-            
-            {/* Sidebar Navigation */}
-            <SidebarNav config={config} />
+            <AdminDashboard />
           </div>
         )}
       </main>

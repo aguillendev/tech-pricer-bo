@@ -1,52 +1,20 @@
 import React from 'react';
-import { Trash2, FileText, ChevronRight, ShoppingCart, List, Settings } from 'lucide-react';
+import { Trash2, FileText, ChevronRight, ShoppingCart } from 'lucide-react';
 import { clsx } from 'clsx';
-import { Link, useLocation } from 'react-router-dom';
-import ConfirmModal from './ConfirmModal';
 
-export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExport, onClearCart }) {
+export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExport }) {
   const totalUsd = cartItems.reduce((acc, item) => acc + item.priceUsd, 0);
   const totalArs = totalUsd * dollarRate;
-  const location = useLocation();
 
   const [isOpen, setIsOpen] = React.useState(false); // Mobile toggle
-  const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
   // Auto-open on desktop if items added? handled by parent or just CSS layout.
   // We'll use a fixed positioning approach.
 
   if (cartItems.length === 0) {
     return (
-        <div className="hidden lg:flex flex-col w-96 bg-white border-l border-slate-200 h-[calc(100vh-64px)] sticky top-16">
-            {/* Header de navegación */}
-            <div className="p-4 border-b border-slate-200 bg-slate-50">
-              <nav className="flex items-center space-x-2">
-                <Link
-                  to="/"
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-                    location.pathname === '/' 
-                      ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                      : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-                  }`}
-                >
-                  <List className="w-4 h-4" />
-                  <span>Lista de Precios</span>
-                </Link>
-                <Link
-                  to="/admin"
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-                    location.pathname === '/admin' 
-                      ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                      : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-                  }`}
-                >
-                  <Settings className="w-4 h-4" />
-                  <span>Administración</span>
-                </Link>
-              </nav>
-            </div>
-            
-            <div className="p-6 text-center text-slate-400 mt-10">
+        <div className="hidden lg:flex flex-col w-80 bg-white border-l border-slate-200 p-6 h-[calc(100vh-64px)] sticky top-16">
+            <div className="text-center text-slate-400 mt-10">
                 <ShoppingCart className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>Tu presupuesto está vacío</p>
                 <p className="text-sm mt-2">Agrega productos de la lista.</p>
@@ -62,14 +30,14 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
         <div className="flex items-center justify-between">
           <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer flex flex-col">
             <span className="text-xs text-slate-500 font-semibold uppercase">Total Presupuesto</span>
-            <span className="text-xl font-bold text-[#d4af37] font-mono">
-                ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <span className="text-xl font-bold text-blue-600 font-mono">
+                ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 0 })}
             </span>
             <span className="text-xs text-slate-400">{cartItems.length} ítems</span>
           </div>
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-[#d4af37] text-[#1e3a5f] px-4 py-2 rounded-lg font-semibold shadow-lg shadow-[#d4af37]/30"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow-lg shadow-blue-500/30"
           >
             Ver Detalle
           </button>
@@ -78,37 +46,9 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
 
       {/* Sidebar (Desktop: Static/Sticky, Mobile: Fixed Overlay) */}
       <div className={clsx(
-        "fixed inset-y-0 right-0 z-50 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:transform-none lg:static lg:w-96 lg:shadow-none lg:border-l lg:border-slate-200 lg:h-[calc(100vh-64px)] lg:sticky lg:top-16 flex flex-col",
+        "fixed inset-y-0 right-0 z-50 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:transform-none lg:static lg:w-80 lg:shadow-none lg:border-l lg:border-slate-200 lg:h-[calc(100vh-64px)] lg:sticky lg:top-16 flex flex-col",
         isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
       )}>
-        {/* Header de navegación (Desktop only) */}
-        <div className="hidden lg:block p-4 border-b border-slate-200 bg-slate-50">
-          <nav className="flex items-center space-x-2">
-            <Link
-              to="/"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-                location.pathname === '/' 
-                  ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                  : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-              }`}
-            >
-              <List className="w-4 h-4" />
-              <span>Lista de Precios</span>
-            </Link>
-            <Link
-              to="/admin"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-                location.pathname === '/admin' 
-                  ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                  : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Administración</span>
-            </Link>
-          </nav>
-        </div>
-
         <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50 lg:bg-white">
           <h2 className="font-bold text-lg text-slate-800 flex items-center">
             <ShoppingCart className="w-5 h-5 mr-2" />
@@ -125,7 +65,7 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
               <div className="flex-1 min-w-0 pr-2">
                 <p className="font-medium text-slate-900 truncate">{item.name}</p>
                 <p className="text-sm text-slate-500 font-mono">
-                  ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
                 </p>
               </div>
               <button
@@ -143,37 +83,18 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
             <span className="text-slate-500 font-medium">Total Estimado</span>
           </div>
           <div className="text-3xl font-bold text-slate-900 font-mono mb-6">
-            ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 0 })}
           </div>
 
-          <div className="space-y-3">
-            <button
-              onClick={onExport}
-              className="w-full bg-[#1e3a5f] hover:bg-[#152943] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#1e3a5f]/30 flex items-center justify-center space-x-2 transition transform active:scale-[0.98]"
-            >
-              <FileText className="w-5 h-5" />
-              <span>Exportar Presupuesto</span>
-            </button>
-            
-            <button
-              onClick={() => setShowConfirmModal(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center space-x-2 transition transform active:scale-[0.98]"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>Vaciar Presupuesto</span>
-            </button>
-          </div>
+          <button
+            onClick={onExport}
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg shadow-slate-900/20 flex items-center justify-center space-x-2 transition transform active:scale-[0.98]"
+          >
+            <FileText className="w-5 h-5" />
+            <span>Exportar Presupuesto</span>
+          </button>
         </div>
       </div>
-
-      {/* Confirm Modal */}
-      <ConfirmModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={onClearCart}
-        title="Vaciar Presupuesto"
-        message="¿Estás seguro de que deseas eliminar todos los productos del presupuesto? Esta acción no se puede deshacer."
-      />
 
       {/* Overlay for mobile */}
       {isOpen && (
