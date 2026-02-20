@@ -13,38 +13,10 @@ export default function SidebarNav({ config }) {
   };
 
   return (
-    <div className="hidden lg:flex flex-col w-96 bg-white border-l border-slate-200 h-[calc(100vh-64px)] sticky top-16">
-      {/* Header de navegación */}
-      <div className="px-4 pt-5 pb-8 border-b border-slate-200 bg-slate-50">
-        <nav className="flex items-center space-x-2">
-          <Link
-            to="/"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-              location.pathname === '/' 
-                ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-            }`}
-          >
-            <List className="w-4 h-4" />
-            <span>Lista de Precios</span>
-          </Link>
-          <Link
-            to="/admin"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
-              location.pathname === '/admin' 
-                ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
-                : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
-            }`}
-          >
-            <Settings className="w-4 h-4" />
-            <span>Administración</span>
-          </Link>
-        </nav>
-      </div>
-
+    <div className="hidden lg:block w-72 bg-white rounded-lg border border-slate-200">
       {/* Contenido informativo - Solo en página Admin */}
       {location.pathname === '/admin' && config && (
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="p-4 space-y-4">
           {/* Configuración Global */}
           <div className="bg-white rounded-lg p-4 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Ganancia Global</p>
