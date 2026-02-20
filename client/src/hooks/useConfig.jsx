@@ -44,7 +44,6 @@ export function ConfigProvider({ children }) {
 
   // Fetch local config (profit margin)
   const fetchConfig = useCallback(async () => {
-    console.log('[useConfig] Fetching config...');
     setLoading(true);
     try {
       // Get dollar rate from external API
@@ -54,8 +53,7 @@ export function ConfigProvider({ children }) {
       const response = await api.get('/public/config');
       setConfig(prev => ({
         ...prev,
-        profitMargin: response.data.profitMargin || 30,
-        profitRules: response.data.profitRules || []
+        profitMargin: response.data.profitMargin || 30
       }));
     } catch (err) {
       setError(err);
@@ -64,12 +62,10 @@ export function ConfigProvider({ children }) {
     }
   }, [fetchDollarRate]);
 
-  // Initial load - only once
+  // Initial load
   useEffect(() => {
-    console.log('[useConfig] Initial mount, fetching config once');
     fetchConfig();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array - only run once on mount
+  }, [fetchConfig]);
 
   // Auto-refresh dollar rate every hour (3600000 ms)
   useEffect(() => {

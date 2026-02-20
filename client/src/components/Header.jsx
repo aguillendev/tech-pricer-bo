@@ -1,12 +1,13 @@
 import React from 'react';
 import { useConfig } from '../hooks/useConfig.jsx';
 import { useAuth } from '../hooks/useAuth';
-import { DollarSign, Monitor, Lock, UserCheck, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { DollarSign, Monitor, Lock, UserCheck, LogOut, List, Settings } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const { config, loading } = useConfig();
   const { isLoggedIn, user, logout } = useAuth();
+  const location = useLocation();
 
   return (
     <header className="bg-[#1e3a5f] text-white shadow-lg sticky top-0 z-50">
@@ -40,7 +41,7 @@ export default function Header() {
               {/* Mobile visible minimal rate */}
               <div className="md:hidden flex items-center bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
                 <span className="text-xs text-slate-400 mr-2">USD</span>
-                <span className="text-[#d4af37] font-bold font-mono">
+                <span className="text-green-400 font-bold font-mono">
                   {loading ? '...' : `$${config.dollarRate?.toFixed(0)}`}
                 </span>
               </div>
@@ -50,7 +51,7 @@ export default function Header() {
           {/* Auth Status */}
           {isLoggedIn ? (
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 bg-[#BAE6FD]/40 text-[#1e3a5f] px-3 py-1.5 rounded-full text-sm font-medium">
+              <div className="flex items-center space-x-2 bg-green-600/20 text-green-400 px-3 py-1.5 rounded-full text-sm font-medium">
                 <UserCheck className="w-4 h-4" />
                 <span className="hidden sm:inline">{user?.name || 'Admin'}</span>
               </div>

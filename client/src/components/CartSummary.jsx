@@ -2,14 +2,12 @@ import React from 'react';
 import { Trash2, FileText, ChevronRight, ShoppingCart, List, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import ConfirmModal from './ConfirmModal';
 
 export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExport, onClearCart }) {
   const totalUsd = cartItems.reduce((acc, item) => acc + item.priceUsd, 0);
   const totalArs = totalUsd * dollarRate;
   const location = useLocation();
-  const { isLoggedIn } = useAuth();
 
   const [isOpen, setIsOpen] = React.useState(false); // Mobile toggle
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
@@ -19,11 +17,39 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
 
   if (cartItems.length === 0) {
     return (
-        <div className="hidden lg:block w-72 bg-white rounded-lg border border-slate-200">
-            <div className="p-6 text-center text-slate-400">
+        <div className="hidden lg:flex flex-col w-96 bg-white border-l border-slate-200 h-[calc(100vh-64px)] sticky top-16">
+            {/* Header de navegación */}
+            <div className="p-4 border-b border-slate-200 bg-slate-50">
+              <nav className="flex items-center space-x-2">
+                <Link
+                  to="/"
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
+                    location.pathname === '/' 
+                      ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
+                      : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  <span>Lista de Precios</span>
+                </Link>
+                <Link
+                  to="/admin"
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
+                    location.pathname === '/admin' 
+                      ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
+                      : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
+                  }`}
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Administración</span>
+                </Link>
+              </nav>
+            </div>
+            
+            <div className="p-6 text-center text-slate-400 mt-10">
                 <ShoppingCart className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="text-sm">Tu presupuesto está vacío</p>
-                <p className="text-xs mt-2">Agrega productos de la lista.</p>
+                <p>Tu presupuesto está vacío</p>
+                <p className="text-sm mt-2">Agrega productos de la lista.</p>
             </div>
         </div>
     );
@@ -52,10 +78,36 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
 
       {/* Sidebar (Desktop: Static/Sticky, Mobile: Fixed Overlay) */}
       <div className={clsx(
-        "fixed inset-y-0 right-0 z-50 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out",
-        "lg:static lg:w-72 lg:shadow-none lg:rounded-lg lg:border lg:border-slate-200 lg:transform-none flex flex-col",
+        "fixed inset-y-0 right-0 z-50 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:transform-none lg:static lg:w-96 lg:shadow-none lg:border-l lg:border-slate-200 lg:h-[calc(100vh-64px)] lg:sticky lg:top-16 flex flex-col",
         isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
       )}>
+        {/* Header de navegación (Desktop only) */}
+        <div className="hidden lg:block p-4 border-b border-slate-200 bg-slate-50">
+          <nav className="flex items-center space-x-2">
+            <Link
+              to="/"
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
+                location.pathname === '/' 
+                  ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
+                  : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
+              }`}
+            >
+              <List className="w-4 h-4" />
+              <span>Lista de Precios</span>
+            </Link>
+            <Link
+              to="/admin"
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition flex-1 justify-center ${
+                location.pathname === '/admin' 
+                  ? 'bg-[#d4af37] text-[#1e3a5f] font-semibold' 
+                  : 'text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100'
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+              <span>Administración</span>
+            </Link>
+          </nav>
+        </div>
 
         <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50 lg:bg-white">
           <h2 className="font-bold text-lg text-slate-800 flex items-center">
@@ -78,7 +130,7 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
               </div>
               <button
                 onClick={() => onRemoveItem(item.id)}
-                className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-amber-50 transition"
+                className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition"
               >
                 <Trash2 className="w-4 h-4" />
               </button>

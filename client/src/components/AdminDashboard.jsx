@@ -7,7 +7,7 @@ import ConfirmModal from './ConfirmModal';
 
 export default function AdminDashboard() {
     const { config, updateConfig, refreshDollarRate } = useConfig();
-    const { addProduct, importProducts, products } = useProducts();
+    const { addProduct, importProducts, deleteAllProducts, products } = useProducts();
 
     const [activeTab, setActiveTab] = useState('config');
     const [status, setStatus] = useState({ type: '', message: '' });
@@ -19,6 +19,7 @@ export default function AdminDashboard() {
     const [useCustomCategory, setUseCustomCategory] = useState(false);
     const [loadingAction, setLoadingAction] = useState(false);
     const [importedProducts, setImportedProducts] = useState([]);
+    const [showConfirmDeleteAll, setShowConfirmDeleteAll] = useState(false);
     
     // Profit Rules State
     const [profitRules, setProfitRules] = useState(config.profitRules || []);
@@ -139,6 +140,18 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleDeleteAllProducts = async () => {
+        setLoadingAction(true);
+        setShowConfirmDeleteAll(false);
+        const result = await deleteAllProducts();
+        setLoadingAction(false);
+        if (result.success) {
+            showStatus('success', result.message || 'Productos eliminados correctamente');
+            setImportedProducts([]);
+        } else {
+            showStatus('error', result.message || 'Error al eliminar productos');
+        }
+    };
 
     const handleAddRule = async () => {
         if (!newRule.priceThreshold || !newRule.profitPercent) {
@@ -314,19 +327,19 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[600px] flex flex-col md:flex-row">
             {/* Sidebar Navigation */}
-            <div className="md:w-64 bg-slate-50 border-b md:border-r md:border-b-0 border-slate-100 p-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2 hidden md:block">Menú Admin</h3>
-                <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1 md:space-y-1 md:gap-0 -mx-2 px-2 md:mx-0 md:px-0">
+            <div className="md:w-64 bg-slate-50 border-r border-slate-100 p-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menú Admin</h3>
+                <nav className="space-y-1">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={clsx(
-                                "flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-3 rounded-lg text-sm font-medium transition whitespace-nowrap",
+                                "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition",
                                 activeTab === tab.id
-                                    ? "bg-white text-[#1e3a5f] shadow-sm ring-1 ring-slate-200"
+                                    ? "bg-white text-blue-600 shadow-sm ring-1 ring-slate-200"
                                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                             )}
                         >
@@ -338,11 +351,11 @@ export default function AdminDashboard() {
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 p-4 md:p-8 overflow-y-auto max-h-[calc(100vh-200px)]">
+            <div className="flex-1 p-8">
                 {status.message && (
                     <div className={clsx(
                         "mb-6 p-4 rounded-lg flex items-center",
-                        status.type === 'success' ? "bg-[#BAE6FD] text-[#1e3a5f] border border-sky-300" : "bg-amber-50 text-amber-900 border border-amber-200"
+                        status.type === 'success' ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"
                     )}>
                         {status.type === 'success' ? <CheckCircle className="w-5 h-5 mr-2" /> : <AlertCircle className="w-5 h-5 mr-2" />}
                         {status.message}
@@ -361,12 +374,12 @@ export default function AdminDashboard() {
                                     step="0.1"
                                     value={profitMargin}
                                     onChange={(e) => setProfitMargin(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <button
                                 disabled={loadingAction}
-                                className="flex items-center justify-center space-x-2 w-full bg-[#1e3a5f] text-white py-3 rounded-lg hover:bg-[#152943] transition disabled:opacity-50"
+                                className="flex items-center justify-center space-x-2 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                             >
                                 {loadingAction ? 'Guardando...' : <><Save className="w-4 h-4" /><span>Guardar Cambios</span></>}
                             </button>
@@ -401,7 +414,7 @@ export default function AdminDashboard() {
                                     <select
                                         value={newRule.operator}
                                         onChange={(e) => setNewRule({ ...newRule, operator: e.target.value })}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                                     >
                                         <option value="menor">Menor a</option>
                                         <option value="mayor">Mayor a</option>
@@ -427,7 +440,7 @@ export default function AdminDashboard() {
                                                 setNewRule({ ...newRule, priceThreshold: formatted });
                                             }
                                         }}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                                     />
                                 </div>
                                 <div className="flex-1 min-w-[100px]">
@@ -435,7 +448,7 @@ export default function AdminDashboard() {
                                     <select
                                         value={newRule.currency}
                                         onChange={(e) => setNewRule({ ...newRule, currency: e.target.value })}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                                     >
                                         <option value="USD">U$S</option>
                                         <option value="ARS">ARS $</option>
@@ -449,14 +462,14 @@ export default function AdminDashboard() {
                                         placeholder="15"
                                         value={newRule.profitPercent}
                                         onChange={(e) => setNewRule({ ...newRule, profitPercent: e.target.value })}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                                     />
                                 </div>
                                 <button
                                     type="button"
                                     onClick={handleAddRule}
                                     disabled={loadingAction}
-                                    className="px-4 py-2.5 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#152943] transition text-sm font-medium whitespace-nowrap disabled:opacity-50"
+                                    className="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium whitespace-nowrap disabled:opacity-50"
                                 >
                                     {loadingAction ? '⏳' : (editingRuleId ? '💾 Guardar' : '+ Agregar')}
                                 </button>
@@ -466,13 +479,13 @@ export default function AdminDashboard() {
                         {/* Lista de Reglas */}
                         {profitRules.length > 0 && (
                             <div className="mb-6">
-                                <div className="bg-gradient-to-r from-[#1e3a5f] to-[#152943] rounded-t-xl p-4 flex items-center justify-between">
+                                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-xl p-4 flex items-center justify-between">
                                     <h3 className="text-base font-bold text-white flex items-center gap-2">
                                         <TrendingUp className="w-5 h-5" />
                                         Reglas Activas ({profitRules.length})
                                     </h3>
                                 </div>
-                                <div className="bg-white border-2 border-[#d4af37] rounded-b-xl p-4 space-y-3">
+                                <div className="bg-white border-2 border-blue-200 rounded-b-xl p-4 space-y-3">
                                     {profitRules.map((rule) => {
                                         // Formatear precio con separador de miles
                                         const parts = rule.priceThreshold.toFixed(2).split('.');
@@ -480,25 +493,25 @@ export default function AdminDashboard() {
                                         const formattedPrice = parts.join(',');
                                         
                                         return (
-                                            <div key={rule.id} className="bg-gradient-to-r from-slate-50 to-[#BAE6FD]/30 border-2 border-sky-200 rounded-lg p-4 flex items-center justify-between hover:shadow-md hover:border-sky-300 transition-all">
+                                            <div key={rule.id} className="bg-gradient-to-r from-slate-50 to-blue-50 border-2 border-blue-100 rounded-lg p-4 flex items-center justify-between hover:shadow-md hover:border-blue-300 transition-all">
                                                 <div className="flex items-center space-x-4">
-                                                    <div className="bg-[#1e3a5f] text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm">
+                                                    <div className="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm">
                                                         {rule.operator === 'mayor' ? '>' : rule.operator === 'menor' ? '<' : '='}
                                                     </div>
                                                     <p className="text-sm text-slate-800 font-medium">
-                                                        Precio <span className="font-bold text-[#1e3a5f]">
+                                                        Precio <span className="font-bold text-blue-700">
                                                             {rule.operator === 'mayor' ? 'mayor a' : rule.operator === 'menor' ? 'menor a' : 'igual a'}
                                                         </span>{' '}
-                                                        <span className="font-bold text-[#1e3a5f] bg-[#BAE6FD] px-2 py-1 rounded">
+                                                        <span className="font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">
                                                             {rule.currency === 'USD' ? 'U$S' : 'ARS $'} {formattedPrice}
                                                         </span>
-                                                        {' '}→ Ganancia: <span className="font-bold text-[#d4af37] bg-[#BAE6FD] px-2 py-1 rounded">{rule.profitPercent}%</span>
+                                                        {' '}→ Ganancia: <span className="font-bold text-green-600 bg-green-100 px-2 py-1 rounded">{rule.profitPercent}%</span>
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => handleEditRule(rule)}
-                                                        className="text-[#1e3a5f] hover:text-white hover:bg-[#1e3a5f] p-2 rounded-lg transition-all"
+                                                        className="text-blue-500 hover:text-white hover:bg-blue-500 p-2 rounded-lg transition-all"
                                                         title="Editar regla"
                                                     >
                                                         <Edit2 className="w-5 h-5" />
@@ -530,13 +543,24 @@ export default function AdminDashboard() {
                 {/* Import Tab */}
                 {activeTab === 'import' && (
                     <div className="h-full flex flex-col">
-                        <div className="mb-6">
+                        <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-slate-900">Importación Masiva de Productos</h2>
+                            {products && products.length > 0 && (
+                                <button
+                                    onClick={() => setShowConfirmDeleteAll(true)}
+                                    disabled={loadingAction}
+                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center space-x-2 text-sm font-medium shadow-sm"
+                                    title="Eliminar todos los productos actuales"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    <span>Eliminar Todo ({products.length})</span>
+                                </button>
+                            )}
                         </div>
                         <div className="flex-1 flex flex-col">
                             <p className="text-sm text-slate-500 mb-2">Pega aquí el listado de productos (formato: nombre, precio, categoría).</p>
                             <textarea
-                                className="flex-1 w-full p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none font-mono text-sm resize-none mb-6 min-h-[200px]"
+                                className="flex-1 w-full p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm resize-none mb-6 min-h-[200px]"
                                 placeholder="Laptop Gamer, 850.00, Computación&#10;Mouse RGB, 25.50, Periféricos&#10;Monitor 27, 300.00"
                                 value={importText}
                                 onChange={(e) => setImportText(e.target.value)}
@@ -554,7 +578,7 @@ export default function AdminDashboard() {
                         {importedProducts.length > 0 && (
                             <div className="mt-8 border-t border-slate-200 pt-6">
                                 <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                                    <CheckCircle className="w-5 h-5 text-[#d4af37] mr-2" />
+                                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                                     Productos Importados ({importedProducts.length})
                                 </h3>
                                 <div className="overflow-x-auto rounded-lg border border-slate-200">
@@ -572,7 +596,7 @@ export default function AdminDashboard() {
                                                 <tr key={product.id} className="hover:bg-slate-50 transition">
                                                     <td className="px-4 py-3 text-slate-500">{product.id}</td>
                                                     <td className="px-4 py-3 font-medium text-slate-900">{product.name}</td>
-                                                    <td className="px-4 py-3 text-right text-[#1e3a5f] font-mono">${product.priceUsd.toFixed(2)}</td>
+                                                    <td className="px-4 py-3 text-right text-blue-600 font-mono">${product.priceUsd.toFixed(2)}</td>
                                                     <td className="px-4 py-3 text-slate-600">{product.category}</td>
                                                 </tr>
                                             ))}
@@ -594,7 +618,7 @@ export default function AdminDashboard() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={manualProduct.name}
                                     onChange={e => setManualProduct({ ...manualProduct, name: e.target.value })}
                                 />
@@ -604,7 +628,7 @@ export default function AdminDashboard() {
                                 {!useCustomCategory ? (
                                     <div className="space-y-2">
                                         <select
-                                            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none bg-white"
+                                            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                                             value={manualProduct.category}
                                             onChange={e => {
                                                 if (e.target.value === '__custom__') {
@@ -619,7 +643,7 @@ export default function AdminDashboard() {
                                             {getUniqueCategories().map(cat => (
                                                 <option key={cat} value={cat}>{cat}</option>
                                             ))}
-                                            <option value="__custom__" className="font-semibold text-[#1e3a5f]">✏️ Agregar categoría nueva...</option>
+                                            <option value="__custom__" className="font-semibold text-blue-600">✏️ Agregar categoría nueva...</option>
                                         </select>
                                     </div>
                                 ) : (
@@ -627,7 +651,7 @@ export default function AdminDashboard() {
                                         <input
                                             type="text"
                                             placeholder="Escribe el nombre de la nueva categoría"
-                                            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none"
+                                            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                                             value={manualProduct.category}
                                             onChange={e => setManualProduct({ ...manualProduct, category: e.target.value })}
                                         />
@@ -650,7 +674,7 @@ export default function AdminDashboard() {
                                     type="text"
                                     required
                                     placeholder="1.250,00"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1e3a5f] outline-none"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={manualProduct.priceUsd}
                                     onChange={e => {
                                         const value = e.target.value;
@@ -680,6 +704,15 @@ export default function AdminDashboard() {
                     </div>
                 )}
             </div>
+
+            {/* Confirm Delete All Modal */}
+            <ConfirmModal
+                isOpen={showConfirmDeleteAll}
+                onClose={() => setShowConfirmDeleteAll(false)}
+                onConfirm={handleDeleteAllProducts}
+                title="Eliminar Todos los Productos"
+                message={`¿Estás seguro de que deseas eliminar TODOS los productos (${products?.length || 0})? Esta acción no se puede deshacer y eliminará el catálogo completo.`}
+            />
         </div>
     );
 }
