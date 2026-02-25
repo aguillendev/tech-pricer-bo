@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, AlertCircle, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
@@ -7,18 +7,18 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      // Simple mock validation
       if (password === 'admin') {
         login(email);
       } else {
-        alert('Credenciales incorrectas (prueba con cualquier email y pass: admin)');
+        setError('Credenciales incorrectas. Verificá tu usuario y contraseña.');
       }
     }, 1000);
   };
@@ -33,16 +33,32 @@ export default function Login() {
         <p className="text-slate-500 text-sm mt-2">Ingresa tus credenciales para gestionar.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Error inline */}
+      {error && (
+        <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            type="button"
+            onClick={() => setError('')}
+            className="text-red-400 hover:text-red-600 transition shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
           <input
             type="email"
             required
-            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-            placeholder="admin@techpricer.com"
+            className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none transition ${error ? 'border-red-300 bg-red-50/30' : 'border-slate-300'
+              }`}
+            placeholder="admin@cahpoint.com"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => { setEmail(e.target.value); setError(''); }}
           />
         </div>
         <div>
@@ -50,10 +66,11 @@ export default function Login() {
           <input
             type="password"
             required
-            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none transition ${error ? 'border-red-300 bg-red-50/30' : 'border-slate-300'
+              }`}
             placeholder="••••••"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={e => { setPassword(e.target.value); setError(''); }}
           />
         </div>
         <button

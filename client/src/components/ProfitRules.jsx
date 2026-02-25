@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Percent, Plus, Trash2, Pencil, Save, X, AlertCircle, CheckCircle, Info, ArrowRight } from 'lucide-react';
+import { Percent, Plus, Trash2, Pencil, Save, X, AlertCircle, CheckCircle, Info, ArrowRight, AlertTriangle } from 'lucide-react';
 import { getRules, createRule, updateRule, deleteRule } from '../services/api';
 
 const EMPTY_RULE = { minPriceUsd: '', maxPriceUsd: '', profitPercentage: '', description: '' };
@@ -11,6 +11,51 @@ function RangeLabel({ rule }) {
         <span className="inline-flex items-center gap-1.5 text-xs bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-3 py-1 font-mono font-medium">
             {from} <ArrowRight className="w-3 h-3" /> {to}
         </span>
+    );
+}
+
+// ── Modal de confirmación de eliminación ──────────────────────────────────────
+function ConfirmDeleteRuleModal({ rule, onConfirm, onCancel }) {
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onCancel} />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+                <button
+                    onClick={onCancel}
+                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition"
+                >
+                    <X className="w-4 h-4" />
+                </button>
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                    <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 text-center mb-1">Eliminar regla</h3>
+                <p className="text-sm text-slate-500 text-center mb-1">
+                    ¿Seguro que querés eliminar la regla
+                </p>
+                {rule && (
+                    <p className="text-sm font-semibold text-slate-800 text-center mb-5">
+                        {rule.minPriceUsd ?? '0'} – {rule.maxPriceUsd ?? '∞'} USD → {rule.profitPercentage}%
+                        {rule.description ? ` (${rule.description})` : ''}?
+                    </p>
+                )}
+                <p className="text-xs text-red-600 text-center mb-6 font-medium">Esta acción no se puede deshacer.</p>
+                <div className="flex gap-3">
+                    <button
+                        onClick={onCancel}
+                        className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 transition"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 shadow-sm shadow-red-200"
+                    >
+                        <Trash2 className="w-4 h-4" /> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -118,6 +163,7 @@ export default function ProfitRules() {
     const [showAdd, setShowAdd] = useState(false);
     const [newForm, setNewForm] = useState(EMPTY_RULE);
     const [status, setStatus] = useState({ type: '', message: '' });
+    const [ruleToDelete, setRuleToDelete] = useState(null); // regla pendiente de confirmar
 
     const showStatus = (type, message) => {
         setStatus({ type, message });
@@ -172,18 +218,27 @@ export default function ProfitRules() {
 
     // ── Eliminar ──────────────────────────────────────────────────────────────
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Eliminar esta regla?')) return;
         try {
             await deleteRule(id);
             showStatus('success', 'Regla eliminada.');
+            setRuleToDelete(null);
             fetchRules();
         } catch {
             showStatus('error', 'Error al eliminar la regla.');
+            setRuleToDelete(null);
         }
     };
 
     return (
         <div className="max-w-2xl">
+            {/* Modal de confirmación */}
+            {ruleToDelete && (
+                <ConfirmDeleteRuleModal
+                    rule={ruleToDelete}
+                    onConfirm={() => handleDelete(ruleToDelete.id)}
+                    onCancel={() => setRuleToDelete(null)}
+                />
+            )}
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
@@ -214,8 +269,8 @@ export default function ProfitRules() {
             {/* Status */}
             {status.message && (
                 <div className={`mb-5 p-3 rounded-lg flex items-center gap-2 text-sm ${status.type === 'success'
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                     {status.type === 'success'
                         ? <CheckCircle className="w-4 h-4 shrink-0" />
@@ -289,7 +344,7 @@ export default function ProfitRules() {
                                             <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(rule.id)}
+                                            onClick={() => setRuleToDelete(rule)}
                                             className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                                             title="Eliminar"
                                         >

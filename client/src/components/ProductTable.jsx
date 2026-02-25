@@ -77,6 +77,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
   const [deleting, setDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const { isLoggedIn } = useAuth();
 
   const categories = useMemo(() => {
@@ -139,7 +140,9 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
       onProductsDeleted?.();
     } catch (err) {
       console.error(err);
-      alert('Error al eliminar los productos. Intenta nuevamente.');
+      setShowConfirm(false);
+      setErrorMsg('Error al eliminar los productos. Intenta nuevamente.');
+      setTimeout(() => setErrorMsg(''), 5000);
     } finally {
       setDeleting(false);
     }
@@ -235,6 +238,17 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
             </div>
           )}
         </div>
+
+        {/* ── Mensaje de error inline ── */}
+        {errorMsg && (
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-red-50 border-b border-red-200 text-red-700 text-sm">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{errorMsg}</span>
+            <button onClick={() => setErrorMsg('')} className="ml-auto text-red-400 hover:text-red-600 transition">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* ── Barra de acción (selección activa) ── */}
         {isLoggedIn && someSelected && (
