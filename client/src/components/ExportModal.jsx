@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Printer, Download } from 'lucide-react';
 
-export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, totalArs }) {
+export default function ExportModal({ isOpen, onClose, cartItems, totalArs }) {
   if (!isOpen) return null;
 
   const handlePrint = () => {
@@ -37,7 +37,6 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
           <div className="mb-8 text-center border-b pb-6">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Presupuesto TechPricer</h1>
             <p className="text-slate-500">Fecha: {new Date().toLocaleDateString()}</p>
-            <p className="text-slate-500 text-sm mt-1">Cotización Dólar: ${dollarRate}</p>
           </div>
 
           <table className="w-full text-left mb-8">
@@ -55,7 +54,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, dollarRate, to
                     <div className="text-xs text-slate-500">{item.category}</div>
                   </td>
                   <td className="py-3 text-right text-slate-800 font-mono">
-                    ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
+                    ${(item.finalPriceArs ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
                   </td>
                 </tr>
               ))}

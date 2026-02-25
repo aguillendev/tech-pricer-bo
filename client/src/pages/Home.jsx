@@ -68,7 +68,6 @@ export default function Home() {
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         cartItems={cartItems}
-        dollarRate={dollarRate}
         totalArs={totalArs}
       />
     </div>

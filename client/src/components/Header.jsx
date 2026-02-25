@@ -1,7 +1,7 @@
 import React from 'react';
 import { useConfig } from '../hooks/useConfig.jsx';
 import { useAuth } from '../hooks/useAuth';
-import { DollarSign, Monitor, Lock, UserCheck, LogOut } from 'lucide-react';
+import { Monitor, Lock, UserCheck, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
@@ -17,30 +17,8 @@ export default function Header() {
           <h1 className="text-xl font-bold tracking-tight">Tech<span className="text-blue-400">Pricer</span></h1>
         </Link>
 
-        {/* Dollar Rate Display */}
+        {/* Auth / Actions */}
         <div className="flex items-center space-x-4">
-          <div className="hidden md:flex flex-col items-end">
-            <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Cotización Dólar</span>
-            <div className="flex items-center text-green-400 font-mono text-lg font-bold" title={config.lastDollarUpdate ? `Actualizado: ${new Date(config.lastDollarUpdate).toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour: '2-digit', minute: '2-digit' })}` : ''}>
-              {loading ? (
-                <span className="animate-pulse">...</span>
-              ) : (
-                <>
-                  <DollarSign className="w-4 h-4 mr-1" />
-                  <span>{config.dollarRate?.toFixed(2)}</span>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile visible minimal rate */}
-          <div className="md:hidden flex items-center bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-            <span className="text-xs text-slate-400 mr-2">USD</span>
-            <span className="text-green-400 font-bold font-mono">
-              {loading ? '...' : `$${config.dollarRate?.toFixed(0)}`}
-            </span>
-          </div>
-
           {/* Auth Status */}
           {isLoggedIn ? (
             <div className="flex items-center space-x-3">
