@@ -35,7 +35,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, totalArs }) {
         {/* Printable Content */}
         <div className="p-8 overflow-y-auto print:p-0 print:overflow-visible flex-1">
           <div className="mb-8 text-center border-b pb-6">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Presupuesto TechPricer</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Presupuesto CAH Point</h1>
             <p className="text-slate-500">Fecha: {new Date().toLocaleDateString()}</p>
           </div>
 
@@ -71,7 +71,7 @@ export default function ExportModal({ isOpen, onClose, cartItems, totalArs }) {
 
           <div className="text-center text-slate-400 text-sm mt-12 print:mt-auto">
             <p>Presupuesto válido por 24 horas.</p>
-            <p>TechPricer Inc.</p>
+            <p>CAH Point</p>
           </div>
         </div>
       </div>

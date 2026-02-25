@@ -12,7 +12,7 @@ export default function Header() {
         {/* Logo / Brand */}
         <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition">
           <Monitor className="text-blue-400 w-6 h-6" />
-          <h1 className="text-xl font-bold tracking-tight">Tech<span className="text-blue-400">Pricer</span></h1>
+          <h1 className="text-xl font-bold tracking-tight">CAH<span className="text-blue-400"> Point</span></h1>
         </Link>
 
         {/* Auth / Actions */}

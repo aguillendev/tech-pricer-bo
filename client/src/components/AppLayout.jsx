@@ -34,7 +34,7 @@ export default function AppLayout({ children }) {
                 <Monitor className="text-blue-400 w-6 h-6 shrink-0" />
                 {!compact && (
                     <span className="text-white text-lg font-bold tracking-tight leading-none">
-                        Tech<span className="text-blue-400">Pricer</span>
+                        CAH<span className="text-blue-400"> Point</span>
                     </span>
                 )}
             </div>
@@ -165,7 +165,7 @@ export default function AppLayout({ children }) {
                     <div className="lg:hidden flex items-center gap-2">
                         <Monitor className="text-blue-500 w-5 h-5" />
                         <span className="font-bold text-slate-900">
-                            Tech<span className="text-blue-500">Pricer</span>
+                            CAH<span className="text-blue-500"> Point</span>
                         </span>
                     </div>
 

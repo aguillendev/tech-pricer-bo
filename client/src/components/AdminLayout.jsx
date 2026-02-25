@@ -27,7 +27,7 @@ export default function AdminLayout({ activeTab, onTabChange, children }) {
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
                     <Monitor className="text-blue-400 w-5 h-5" />
                     <span className="text-white text-lg font-bold tracking-tight">
-                        Tech<span className="text-blue-400">Pricer</span>
+                        CAH<span className="text-blue-400"> Point</span>
                     </span>
                 </Link>
                 <p className="text-xs text-slate-500 mt-1">Panel de Administración</p>
@@ -124,7 +124,7 @@ export default function AdminLayout({ activeTab, onTabChange, children }) {
                     </button>
                     <Monitor className="text-blue-400 w-5 h-5" />
                     <span className="font-bold">
-                        Tech<span className="text-blue-400">Pricer</span>
+                        CAH<span className="text-blue-400"> Point</span>
                     </span>
                     <span className="ml-auto text-slate-400 text-sm font-medium capitalize">
                         {NAV_ITEMS.find(i => i.id === activeTab)?.label}
