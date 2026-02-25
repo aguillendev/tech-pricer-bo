@@ -6,7 +6,7 @@ import { useProducts } from '../hooks/useProducts';
 import { useConfig } from '../hooks/useConfig.jsx';
 
 export default function Home() {
-  const { products, loading: productsLoading } = useProducts();
+  const { products, loading: productsLoading, fetchProducts } = useProducts();
   const { config, loading: configLoading } = useConfig();
 
   const [cartItems, setCartItems] = useState([]);
@@ -51,6 +51,7 @@ export default function Home() {
             dollarRate={dollarRate}
             onAddToCart={handleAddToCart}
             cartItems={cartItems}
+            onProductsDeleted={fetchProducts}
           />
         )}
       </div>

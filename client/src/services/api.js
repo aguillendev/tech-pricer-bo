@@ -14,3 +14,7 @@ export const getRules = () => api.get('/admin/rules').then(r => r.data);
 export const createRule = (rule) => api.post('/admin/rules', rule).then(r => r.data);
 export const updateRule = (id, rule) => api.put(`/admin/rules/${id}`, rule).then(r => r.data);
 export const deleteRule = (id) => api.delete(`/admin/rules/${id}`);
+
+// ── Products ──────────────────────────────────────────────────────────────────
+export const deleteProduct = (id) => api.delete(`/admin/products/${id}`);
+export const deleteProducts = (ids) => api.delete('/admin/products', { data: ids });
