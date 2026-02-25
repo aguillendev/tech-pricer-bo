@@ -6,6 +6,7 @@ import {
 import { clsx } from 'clsx';
 import { useAuth } from '../hooks/useAuth';
 import { deleteProducts } from '../services/api';
+import AddProductModal from './AddProductModal';
 
 // ── Modal de confirmación ────────────────────────────────────────────────────
 function ConfirmDeleteModal({ count, onConfirm, onCancel, loading }) {
@@ -75,6 +76,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [deleting, setDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const { isLoggedIn } = useAuth();
 
   const categories = useMemo(() => {
@@ -147,13 +149,21 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
 
   return (
     <>
-      {/* Modal de confirmación */}
+      {/* Modal de confirmación de borrado */}
       {showConfirm && (
         <ConfirmDeleteModal
           count={selectedIds.size}
           onConfirm={handleDeleteConfirmed}
           onCancel={() => !deleting && setShowConfirm(false)}
           loading={deleting}
+        />
+      )}
+
+      {/* Modal agregar productos */}
+      {showAddModal && (
+        <AddProductModal
+          onClose={() => setShowAddModal(false)}
+          onDone={() => { onProductsDeleted?.(); }}
         />
       )}
 
@@ -182,6 +192,33 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                 ))}
               </select>
             </div>
+
+            {/* Botón + agregar — solo admin */}
+            {isLoggedIn && (
+              <button
+                onClick={() => setShowAddModal(true)}
+                title="Agregar productos"
+                className={[
+                  'group relative flex items-center gap-2 shrink-0',
+                  'pl-3.5 pr-4 py-2.5 rounded-xl',
+                  'bg-gradient-to-br from-blue-500 to-indigo-600',
+                  'text-white text-sm font-semibold',
+                  'shadow-md shadow-blue-500/40',
+                  'hover:shadow-lg hover:shadow-blue-500/50',
+                  'hover:from-blue-400 hover:to-indigo-500',
+                  'hover:scale-[1.03]',
+                  'active:scale-[0.97]',
+                  'transition-all duration-200 ease-out',
+                  'ring-1 ring-white/20',
+                ].join(' ')}
+              >
+                {/* Glow interno */}
+                <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                {/* Ícono que rota al hacer hover */}
+                <Plus className="w-4 h-4 transition-transform duration-200 group-hover:rotate-90 relative z-10" />
+                <span className="hidden sm:inline relative z-10 tracking-wide">Agregar</span>
+              </button>
+            )}
           </div>
 
           {isLoggedIn && (
