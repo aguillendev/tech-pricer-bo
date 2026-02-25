@@ -17,7 +17,7 @@ export default function Admin() {
 
   if (!isLoggedIn) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex-1 flex items-center justify-center py-12 px-4">
         <Login />
       </div>
     );

@@ -198,7 +198,7 @@ export default function AppLayout({ children }) {
                 </header>
 
                 {/* ── Página ── */}
-                <main className="flex-1 p-5 lg:p-7">
+                <main className="flex-1 flex flex-col p-5 lg:p-7">
                     {children}
                 </main>
             </div>

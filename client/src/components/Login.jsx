@@ -24,48 +24,46 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
-        <div className="text-center mb-8">
-          <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-blue-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900">Acceso Administrativo</h2>
-          <p className="text-slate-500 text-sm mt-2">Ingresa tus credenciales para gestionar.</p>
+    <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+      <div className="text-center mb-8">
+        <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Lock className="w-8 h-8 text-blue-600" />
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-            <input
-              type="email"
-              required
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="admin@techpricer.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Contraseña</label>
-            <input
-              type="password"
-              required
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50"
-          >
-            {loading ? 'Verificando...' : 'Ingresar'}
-          </button>
-        </form>
+        <h2 className="text-2xl font-bold text-slate-900">Acceso Administrativo</h2>
+        <p className="text-slate-500 text-sm mt-2">Ingresa tus credenciales para gestionar.</p>
       </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+          <input
+            type="email"
+            required
+            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="admin@techpricer.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Contraseña</label>
+          <input
+            type="password"
+            required
+            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="••••••"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50"
+        >
+          {loading ? 'Verificando...' : 'Ingresar'}
+        </button>
+      </form>
     </div>
   );
 }
