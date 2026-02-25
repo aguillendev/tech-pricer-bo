@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Settings, Database, PlusCircle, Save, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import { Settings, Database, PlusCircle, Save, Upload, CheckCircle, AlertCircle, Percent } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useConfig } from '../hooks/useConfig.jsx';
 import { useProducts } from '../hooks/useProducts';
+import ProfitRules from './ProfitRules';
 
 export default function AdminDashboard() {
     const { config, updateConfig, refreshDollarRate } = useConfig();
@@ -78,6 +79,7 @@ export default function AdminDashboard() {
         { id: 'config', label: 'Configuración', icon: Settings },
         { id: 'import', label: 'Importación Masiva', icon: Database },
         { id: 'manual', label: 'Carga Manual', icon: PlusCircle },
+        { id: 'rules', label: 'Reglas de Ganancia', icon: Percent },
     ];
 
     return (
@@ -243,6 +245,8 @@ export default function AdminDashboard() {
                         </form>
                     </div>
                 )}
+                {/* Profit Rules Tab */}
+                {activeTab === 'rules' && <ProfitRules />}
             </div>
         </div>
     );

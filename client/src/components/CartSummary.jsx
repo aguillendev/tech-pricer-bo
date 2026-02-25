@@ -4,7 +4,9 @@ import { clsx } from 'clsx';
 
 export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExport }) {
   const totalUsd = cartItems.reduce((acc, item) => acc + item.priceUsd, 0);
-  const totalArs = totalUsd * dollarRate;
+  // Sumar finalPriceArs de cada item (precio calculado con reglas de ganancia por tramos).
+  // Fallback a priceUsd * dollarRate si el campo no está disponible (productos sin precio calculado).
+  const totalArs = cartItems.reduce((acc, item) => acc + (item.finalPriceArs ?? (item.priceUsd * dollarRate)), 0);
 
   const [isOpen, setIsOpen] = React.useState(false); // Mobile toggle
 
@@ -13,13 +15,13 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
 
   if (cartItems.length === 0) {
     return (
-        <div className="hidden lg:flex flex-col w-80 bg-white border-l border-slate-200 p-6 h-[calc(100vh-64px)] sticky top-16">
-            <div className="text-center text-slate-400 mt-10">
-                <ShoppingCart className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Tu presupuesto está vacío</p>
-                <p className="text-sm mt-2">Agrega productos de la lista.</p>
-            </div>
+      <div className="hidden lg:flex flex-col w-80 bg-white border-l border-slate-200 p-6 h-[calc(100vh-64px)] sticky top-16">
+        <div className="text-center text-slate-400 mt-10">
+          <ShoppingCart className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <p>Tu presupuesto está vacío</p>
+          <p className="text-sm mt-2">Agrega productos de la lista.</p>
         </div>
+      </div>
     );
   }
 
@@ -31,7 +33,7 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
           <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer flex flex-col">
             <span className="text-xs text-slate-500 font-semibold uppercase">Total Presupuesto</span>
             <span className="text-xl font-bold text-blue-600 font-mono">
-                ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 0 })}
+              ${totalArs.toLocaleString('es-AR', { minimumFractionDigits: 0 })}
             </span>
             <span className="text-xs text-slate-400">{cartItems.length} ítems</span>
           </div>
@@ -65,7 +67,7 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
               <div className="flex-1 min-w-0 pr-2">
                 <p className="font-medium text-slate-900 truncate">{item.name}</p>
                 <p className="text-sm text-slate-500 font-mono">
-                  ${(item.priceUsd * dollarRate).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
+                  ${(item.finalPriceArs ?? (item.priceUsd * dollarRate)).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
                 </p>
               </div>
               <button
@@ -99,8 +101,8 @@ export default function CartSummary({ cartItems, dollarRate, onRemoveItem, onExp
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-            className="fixed inset-0 bg-black/20 z-40 lg:hidden backdrop-blur-sm"
-            onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
         />
       )}
     </>

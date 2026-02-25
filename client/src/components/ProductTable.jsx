@@ -3,7 +3,7 @@ import { Search, ShoppingCart, Plus } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '../hooks/useAuth';
 
-export default function ProductTable({ products, dollarRate, onAddToCart, cartItems, profitMargin = 30 }) {
+export default function ProductTable({ products, dollarRate, onAddToCart, cartItems }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const { isLoggedIn } = useAuth();
@@ -27,12 +27,9 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
   // Helper to check if item is in cart
   const isInCart = (productId) => cartItems.some(item => item.id === productId);
 
-  // Calculate prices
-  const calculatePrices = (priceUsd) => {
-    const costArs = priceUsd * dollarRate;
-    const finalPrice = costArs * (1 + profitMargin / 100);
-    return { costArs, finalPrice };
-  };
+  // Calcula solo el costo en ARS (USD × dólar) para la columna informativa del admin.
+  // El precio final (con ganancia por regla) ya viene calculado desde el backend en finalPriceArs.
+  const getCostArs = (priceUsd) => priceUsd * dollarRate;
 
   return (
     <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
@@ -74,7 +71,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
               Cotización: <span className="font-mono font-bold">${dollarRate.toFixed(2)}</span>
             </span>
             <span className="text-slate-500">
-              Ganancia: <span className="font-mono font-bold text-green-600">{profitMargin}%</span>
+              Precios calculados con reglas de ganancia por tramos
             </span>
           </div>
         )}
@@ -101,9 +98,12 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
           <tbody className="divide-y divide-slate-100">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => {
-                const { costArs, finalPrice } = calculatePrices(product.priceUsd);
+                const costArs = getCostArs(product.priceUsd);
+                // finalPriceArs viene del backend, calculado con las reglas de ganancia por tramos.
+                // Si no hay valor (producto sin precio calculado), se muestra el costArs como fallback.
+                const finalPrice = product.finalPriceArs ?? costArs;
                 const inCart = isInCart(product.id);
-                const displayPrice = isLoggedIn ? finalPrice : costArs;
+                const displayPrice = isLoggedIn ? finalPrice : finalPrice;
 
                 return (
                   <tr key={product.id} className="hover:bg-slate-50 transition group">

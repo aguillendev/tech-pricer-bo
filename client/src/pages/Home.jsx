@@ -14,8 +14,8 @@ export default function Home() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const dollarRate = config.dollarRate || 0;
-  // Calculate total ARS for modal
-  const totalArs = cartItems.reduce((acc, item) => acc + (item.priceUsd * dollarRate), 0);
+  // Calcular total ARS usando finalPriceArs que ya incluye las reglas de ganancia por tramos.
+  const totalArs = cartItems.reduce((acc, item) => acc + (item.finalPriceArs ?? (item.priceUsd * dollarRate)), 0);
 
   const handleAddToCart = (product) => {
     if (!cartItems.find(p => p.id === product.id)) {
@@ -49,7 +49,6 @@ export default function Home() {
             <ProductTable
               products={products}
               dollarRate={dollarRate}
-              profitMargin={config.profitMargin || 30}
               onAddToCart={handleAddToCart}
               cartItems={cartItems}
             />
