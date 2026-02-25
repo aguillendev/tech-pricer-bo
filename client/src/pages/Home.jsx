@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
 import ProductTable from '../components/ProductTable';
 import CartSummary from '../components/CartSummary';
 import ExportModal from '../components/ExportModal';
@@ -14,8 +13,10 @@ export default function Home() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const dollarRate = config.dollarRate || 0;
-  // Calcular total ARS usando finalPriceArs que ya incluye las reglas de ganancia por tramos.
-  const totalArs = cartItems.reduce((acc, item) => acc + (item.finalPriceArs ?? (item.priceUsd * dollarRate)), 0);
+  const totalArs = cartItems.reduce(
+    (acc, item) => acc + (item.finalPriceArs ?? (item.priceUsd * dollarRate)),
+    0
+  );
 
   const handleAddToCart = (product) => {
     if (!cartItems.find(p => p.id === product.id)) {
@@ -30,39 +31,37 @@ export default function Home() {
   const isLoading = productsLoading || configLoading;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Header />
-
-      <main className="flex-1 container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6 relative">
-        {/* Main Content: Product List */}
-        <div className="flex-1 min-w-0">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">Listado de Productos</h2>
-            <p className="text-slate-500">Selecciona los componentes para armar tu presupuesto.</p>
-          </div>
-
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <ProductTable
-              products={products}
-              dollarRate={dollarRate}
-              onAddToCart={handleAddToCart}
-              cartItems={cartItems}
-            />
-          )}
+    <div className="flex flex-col lg:flex-row gap-6 h-full relative">
+      {/* Lista de productos */}
+      <div className="flex-1 min-w-0">
+        <div className="mb-5">
+          <h1 className="text-2xl font-bold text-slate-900">Listado de Productos</h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Seleccioná los componentes para armar tu presupuesto.
+          </p>
         </div>
 
-        {/* Sidebar: Cart Summary */}
-        <CartSummary
-          cartItems={cartItems}
-          dollarRate={dollarRate}
-          onRemoveItem={handleRemoveFromCart}
-          onExport={() => setIsExportModalOpen(true)}
-        />
-      </main>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+          </div>
+        ) : (
+          <ProductTable
+            products={products}
+            dollarRate={dollarRate}
+            onAddToCart={handleAddToCart}
+            cartItems={cartItems}
+          />
+        )}
+      </div>
+
+      {/* Carrito */}
+      <CartSummary
+        cartItems={cartItems}
+        dollarRate={dollarRate}
+        onRemoveItem={handleRemoveFromCart}
+        onExport={() => setIsExportModalOpen(true)}
+      />
 
       <ExportModal
         isOpen={isExportModalOpen}

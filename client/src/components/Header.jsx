@@ -1,11 +1,9 @@
 import React from 'react';
-import { useConfig } from '../hooks/useConfig.jsx';
 import { useAuth } from '../hooks/useAuth';
 import { Monitor, Lock, UserCheck, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
-  const { config, loading } = useConfig();
   const { isLoggedIn, user, logout } = useAuth();
 
   return (
