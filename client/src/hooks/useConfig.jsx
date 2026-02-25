@@ -18,7 +18,8 @@ export function ConfigProvider({ children }) {
   const fetchDollarRate = useCallback(async () => {
     setDollarError(null);
     try {
-      const response = await fetch('https://dolarapi.com/v1/dolares/oficial');
+      const dolarApiUrl = import.meta.env.VITE_DOLAR_API_URL ?? 'https://dolarapi.com/v1/dolares/oficial';
+      const response = await fetch(dolarApiUrl);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       if (!data?.venta) throw new Error('La API no devolvió el valor de venta.');
