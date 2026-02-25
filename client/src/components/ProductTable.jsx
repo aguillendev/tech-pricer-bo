@@ -148,7 +148,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
     }
   };
 
-  const colCount = isLoggedIn ? 6 : 3;
+  const colCount = isLoggedIn ? 7 : 3;
 
   return (
     <>
@@ -295,6 +295,7 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                   <>
                     <th className="p-4 font-semibold text-right">Costo USD</th>
                     <th className="p-4 font-semibold text-right">Costo ARS</th>
+                    <th className="p-4 font-semibold text-right text-amber-600">Ganancia</th>
                   </>
                 )}
                 <th className="p-4 font-semibold text-right text-green-600">
@@ -306,8 +307,12 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
             <tbody className="divide-y divide-slate-100">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => {
-                  const costArs = getCostArs(product.priceUsd);
-                  const finalPrice = product.finalPriceArs ?? costArs;
+                  const costArs = dollarRate ? product.priceUsd * dollarRate : null;
+                  const finalPrice = product.finalPriceArs ?? costArs ?? 0;
+                  // Markup aplicado: derivado de finalPriceArs y costArs
+                  const appliedMarkup = costArs && costArs > 0
+                    ? ((finalPrice / costArs) - 1) * 100
+                    : null;
                   const inCart = isInCart(product.id);
                   const isChecked = selectedIds.has(product.id);
 
@@ -343,7 +348,18 @@ export default function ProductTable({ products, dollarRate, onAddToCart, cartIt
                             ${product.priceUsd?.toFixed(2)}
                           </td>
                           <td className="p-4 text-right text-slate-500 font-mono">
-                            ${costArs.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                            {costArs != null
+                              ? `$${costArs.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                              : '—'}
+                          </td>
+                          <td className="p-4 text-right font-mono">
+                            {appliedMarkup != null ? (
+                              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                                +{appliedMarkup.toFixed(1)}%
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">—</span>
+                            )}
                           </td>
                         </>
                       )}
