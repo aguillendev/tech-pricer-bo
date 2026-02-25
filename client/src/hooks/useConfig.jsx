@@ -3,57 +3,51 @@ import api from '../services/api';
 
 const ConfigContext = createContext(null);
 
-// API for official dollar rate (Banco Nación)
-const DOLAR_API_URL = 'https://dolarapi.com/v1/dolares/oficial';
-
 export function ConfigProvider({ children }) {
   const [config, setConfig] = useState({
-    dollarRate: 0,
+    dollarRate: null,      // null = aún no disponible / error
     profitMargin: 30,
-    lastDollarUpdate: null
+    lastDollarUpdate: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dollarError, setDollarError] = useState(null); // error específico de cotización
   const intervalRef = useRef(null);
 
-  // Fetch dollar rate from external API
+  // Consulta la cotización directamente a dolarapi.com desde el frontend
   const fetchDollarRate = useCallback(async () => {
+    setDollarError(null);
     try {
-      const response = await fetch(DOLAR_API_URL);
+      const response = await fetch('https://dolarapi.com/v1/dolares/oficial');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      // Use "venta" (selling price) for customer-facing calculations
+      if (!data?.venta) throw new Error('La API no devolvió el valor de venta.');
+
       const dollarRate = data.venta;
-      // Use current time to show when WE last checked/updated the rate
       const lastDollarUpdate = new Date().toISOString();
-
-      setConfig(prev => ({
-        ...prev,
-        dollarRate,
-        lastDollarUpdate
-      }));
-
-      console.log(`[Cotización] Dólar actualizado: $${dollarRate} (${new Date(lastDollarUpdate).toLocaleString()})`);
+      setConfig(prev => ({ ...prev, dollarRate, lastDollarUpdate }));
+      console.log(`[Cotización] Dólar oficial (venta): $${dollarRate}`);
       return dollarRate;
     } catch (err) {
-      console.error('Error fetching dollar rate:', err);
-      // Fallback to a default if API fails
-      setConfig(prev => ({ ...prev, dollarRate: prev.dollarRate || 1250 }));
+      console.error('[Cotización] Error al obtener cotización:', err.message);
+      setDollarError(
+        'No se pudo obtener la cotización del dólar desde dolarapi.com. ' +
+        'Los precios en ARS no pueden calcularse hasta que la conexión se restaure.'
+      );
+      setConfig(prev => ({ ...prev, dollarRate: null }));
       return null;
     }
   }, []);
 
-  // Fetch local config (profit margin)
+  // Obtiene el margen de ganancia desde el backend
   const fetchConfig = useCallback(async () => {
     setLoading(true);
     try {
-      // Get dollar rate from external API
       await fetchDollarRate();
-
-      // Get local config (profit margin) from our mock/backend
       const response = await api.get('/public/config');
       setConfig(prev => ({
         ...prev,
-        profitMargin: response.data.profitMargin || 30
+        profitMargin: response.data.profitMargin ?? 30,
       }));
     } catch (err) {
       setError(err);
@@ -62,27 +56,18 @@ export function ConfigProvider({ children }) {
     }
   }, [fetchDollarRate]);
 
-  // Initial load
-  useEffect(() => {
-    fetchConfig();
-  }, [fetchConfig]);
+  // Carga inicial
+  useEffect(() => { fetchConfig(); }, [fetchConfig]);
 
-  // Auto-refresh dollar rate every hour (3600000 ms)
+  // Auto-refresh de cotización cada 1 hora
   useEffect(() => {
-    // Set up interval for hourly updates
     intervalRef.current = setInterval(() => {
-      console.log('[Cotización] Actualizando cotización automáticamente (cada 1 hora)...');
+      console.log('[Cotización] Actualizando cotización automáticamente...');
       fetchDollarRate();
-    }, 3600000); // 1 hour = 3600000 ms
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    }, 3_600_000);
+    return () => clearInterval(intervalRef.current);
   }, [fetchDollarRate]);
 
-  // Update config (profit margin)
   const updateConfig = async (newConfig) => {
     try {
       await api.post('/admin/config', newConfig);
@@ -94,10 +79,10 @@ export function ConfigProvider({ children }) {
     }
   };
 
-  // Refresh dollar rate (can be called manually or on import)
+  // Puede usarse antes de importar/agregar productos
   const refreshDollarRate = async () => {
-    console.log('[Cotización] Actualizando cotización manualmente...');
-    return await fetchDollarRate();
+    console.log('[Cotización] Refresh manual...');
+    return fetchDollarRate();
   };
 
   return (
@@ -105,9 +90,10 @@ export function ConfigProvider({ children }) {
       config,
       loading,
       error,
+      dollarError,
       updateConfig,
       refresh: fetchConfig,
-      refreshDollarRate
+      refreshDollarRate,
     }}>
       {children}
     </ConfigContext.Provider>
@@ -116,8 +102,6 @@ export function ConfigProvider({ children }) {
 
 export function useConfig() {
   const context = useContext(ConfigContext);
-  if (!context) {
-    throw new Error('useConfig must be used within a ConfigProvider');
-  }
+  if (!context) throw new Error('useConfig must be used within a ConfigProvider');
   return context;
 }
