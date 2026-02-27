@@ -14,7 +14,7 @@ export function useProducts() {
     setLoading(true);
     try {
       const response = await api.get('/public/products');
-      setProducts(response.data);
+      setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError(err);
     } finally {

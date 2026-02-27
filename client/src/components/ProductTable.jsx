@@ -70,7 +70,8 @@ function ConfirmDeleteModal({ count, onConfirm, onCancel, loading }) {
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
-export default function ProductTable({ products, dollarRate, onAddToCart, cartItems, onProductsDeleted }) {
+export default function ProductTable({ products: productsProp, dollarRate, onAddToCart, cartItems, onProductsDeleted }) {
+  const products = Array.isArray(productsProp) ? productsProp : [];
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [selectedIds, setSelectedIds] = useState(new Set());
