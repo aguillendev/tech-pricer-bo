@@ -1,8 +1,14 @@
 import axios from 'axios';
 
-// Create Axios instance
+function normalizeBaseUrl(url) {
+  if (!url) return 'http://localhost:8080/api';
+  if (/^https?:\/\//.test(url)) return url;
+  // Sin protocolo: es localhost → http, cualquier otro → https
+  return url.startsWith('localhost') ? `http://${url}` : `https://${url}`;
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL),
   timeout: 5000,
 });
 
