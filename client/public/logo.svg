@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Fondo oscuro igual al sidebar (#0f172a) -->
+  <rect width="512" height="512" fill="#0f172a"/>
+
+  <!-- Ícono Monitor (lucide-react style) en azul #60a5fa, centrado -->
+  <!-- Monitor screen body -->
+  <rect x="141" y="146" width="230" height="164" rx="18" ry="18"
+        fill="none" stroke="#60a5fa" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Stand neck -->
+  <line x1="256" y1="310" x2="256" y2="362"
+        stroke="#60a5fa" stroke-width="22" stroke-linecap="round"/>
+  <!-- Stand base -->
+  <line x1="196" y1="362" x2="316" y2="362"
+        stroke="#60a5fa" stroke-width="22" stroke-linecap="round"/>
+</svg>
