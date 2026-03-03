@@ -9,7 +9,7 @@ function normalizeBaseUrl(url) {
 
 const api = axios.create({
   baseURL: normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL),
-  timeout: 5000,
+  timeout: 10000,
 });
 
 export default api;
